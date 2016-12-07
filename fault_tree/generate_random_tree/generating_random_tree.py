@@ -133,7 +133,7 @@ def generate_tree(ngate,nevent):
 	gate_children_dag = complete_tree(gate_event_dag,gate_dataSource,event_dataSource,ancestor)
 	
 
-	#print gate_children_dag
+	print gate_children_dag
 	return gate_children_dag
 
 
@@ -197,13 +197,18 @@ def enrich_tree(tree, gate_dataSource, level):
 		target_node = random.choice(copy_gate_dataSource)
 		repeated_gate_probability = random.random()
 		source_node_level = 0
-		target_node_level = 0
+		target_node_level = 999999999
 
 		for level_num in level:
 			if target_node in level[level_num]:
-				target_node_level = level_num
+				#target_node_level = level_num
+				if target_node_level > level_num:
+					target_node_level = level_num
+
 			if gate in level[level_num]:
-				source_node_level = level_num
+				#source_node_level = level_num
+				if source_node_level < level_num:
+					source_node_level = level_num
 		#print str(target_node_level)+"   "+str(source_node_level)
 		if target_node_level <= source_node_level:
 			continue
@@ -222,7 +227,8 @@ def enrich_tree(tree, gate_dataSource, level):
 			print "add "+str(target_node)+" to "+ str(gate)
 			print str(target_node_level)+"   "+str(source_node_level)
 			tree[gate].append(target_node)
-			level_update(level, target_node, gate, target_node_level, source_node_level)
+			#level_update(level, target_node, gate, target_node_level, source_node_level)
+			fault_tree_level(tree)
 	return tree
 	"""
 	#print str(gate_children_dag)
@@ -255,8 +261,8 @@ def level_update(level, target_node, source_node, target_node_level, source_node
 
 if __name__ == "__main__":	
 
-	ngate = 80
-	nevent = 100
+	ngate = 1000
+	nevent = 2000
 	
 	gate_dataSource = generating_gate_dataSource(ngate)
 	gate_dag = get_gate_dag(gate_dataSource,len(gate_dataSource))
