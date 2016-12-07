@@ -133,7 +133,7 @@ def generate_tree(ngate,nevent):
 	gate_children_dag = complete_tree(gate_event_dag,gate_dataSource,event_dataSource,ancestor)
 	
 
-	print gate_children_dag
+	#print gate_children_dag
 	return gate_children_dag
 
 
@@ -190,7 +190,7 @@ def print_outfile(tree):
 def enrich_tree(tree, gate_dataSource, level):
 
 
-	print "tree in rich"+str(tree)
+	#print "tree in rich"+str(tree)
 	for gate in tree:
 		copy_gate_dataSource = copy.copy(gate_dataSource)
 		#print "copy"+str(copy_gate_dataSource)
@@ -205,7 +205,7 @@ def enrich_tree(tree, gate_dataSource, level):
 			if gate in level[level_num]:
 				source_node_level = level_num
 		#print str(target_node_level)+"   "+str(source_node_level)
-		if target_node_level < source_node_level:
+		if target_node_level <= source_node_level:
 			continue
 		if repeated_gate_probability > 0.7:		
 			copy_gate_dataSource.remove(gate)
@@ -222,6 +222,7 @@ def enrich_tree(tree, gate_dataSource, level):
 			print "add "+str(target_node)+" to "+ str(gate)
 			print str(target_node_level)+"   "+str(source_node_level)
 			tree[gate].append(target_node)
+			level_update(level, target_node, gate, target_node_level, source_node_level)
 	return tree
 	"""
 	#print str(gate_children_dag)
@@ -239,7 +240,16 @@ def enrich_tree(tree, gate_dataSource, level):
 	gate_children_dag = complete_tree(gate_event_dag,gate_dataSource,event_dataSource,ancestor)
 	"""
 
-
+def level_update(level, target_node, source_node, target_node_level, source_node_level):
+	#print level
+	#print source_node
+	#print target_node
+	#print level[target_node_level]
+	#print level[source_node_level]
+	level[target_node_level].remove(str(target_node))
+	level[source_node_level+1].append(str(target_node))
+	#print level[target_node_level]
+	#print level[source_node_level+1]
 
 
 
@@ -252,14 +262,14 @@ if __name__ == "__main__":
 	gate_dag = get_gate_dag(gate_dataSource,len(gate_dataSource))
 	ancestor = found_ancestor(get_father_dataSource(gate_dag))
 	tree = generate_tree(ngate,nevent)
-	print tree
+	#print tree
 	#print "tree"
 	level = fault_tree_level(tree)
-	print level
+	#print level
 	final_tree = enrich_tree(tree,gate_dataSource,level)
-	print final_tree
-	#print tree
-	#print_outfile(tree)
+	#print final_tree
+	print tree
+	print_outfile(tree)
 	
 	
 	
